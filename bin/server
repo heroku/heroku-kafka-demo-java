@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+. bin/setup_certs ${ADDON_NAME:-KAFKA}
+exec java $JAVA_OPTS -cp target/classes:target/dependency/*:src/main/resources com.heroku.kafka.demo.DemoApplication server config.yml

@@ -9,6 +9,18 @@ public class DemoApplication extends Application<DemoConfiguration>  {
   }
 
   @Override
+  public String getName() {
+    return "heroku-kafka-demo";
+  }
+
+  @Override
   public void run(DemoConfiguration config, Environment env) throws Exception {
+    DemoProducer producer = new DemoProducer(config.getKafkaConfig());
+    DemoConsumer consumer = new DemoConsumer(config.getKafkaConfig());
+
+    env.lifecycle().manage(producer);
+    env.lifecycle().manage(consumer);
+
+    env.jersey().register(new DemoResource(producer, consumer));
   }
 }
