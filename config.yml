@@ -1,0 +1,11 @@
+server:
+  type: heroku
+
+logging:
+  level: INFO
+
+  loggers:
+    com.heroku.kafka.demo: DEBUG
+
+  appenders:
+    - type: heroku
