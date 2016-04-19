@@ -4,8 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -28,16 +29,17 @@ public class DemoResource {
   @Path("/")
   @Produces(MediaType.TEXT_HTML)
   @Timed
-  public String index() {
-    return "hello";
+  public DemoView showMessages(@Context UriInfo uriInfo) {
+    String addMessageUrl = uriInfo.getBaseUriBuilder().path(DemoResource.class, "addMessage").build().toString();
+    return new DemoView(addMessageUrl);
   }
 
   @GET
   @Path("/messages")
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
-  public List<String> getMessages() {
-    return consumer.getValues();
+  public List<DemoMessage> getMessages() {
+    return consumer.getMessages();
   }
 
   @POST

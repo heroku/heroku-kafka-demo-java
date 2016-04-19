@@ -1,7 +1,9 @@
 package com.heroku.kafka.demo;
 
 import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 
 public class DemoApplication extends Application<DemoConfiguration>  {
   public static void main(String[] args) throws Exception {
@@ -11,6 +13,11 @@ public class DemoApplication extends Application<DemoConfiguration>  {
   @Override
   public String getName() {
     return "heroku-kafka-demo";
+  }
+
+  @Override
+  public void initialize(Bootstrap<DemoConfiguration> bootstrap) {
+    bootstrap.addBundle(new ViewBundle<>());
   }
 
   @Override

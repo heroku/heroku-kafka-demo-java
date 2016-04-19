@@ -1,6 +1,5 @@
 package com.heroku.kafka.demo;
 
-import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import io.dropwizard.lifecycle.Managed;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -8,13 +7,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,7 +31,7 @@ public class DemoConsumer implements Managed {
 
   private KafkaConsumer<String, String> consumer;
 
-  private final Queue<ConsumerRecord<String, String>> queue = new ArrayBlockingQueue<>(CAPACITY);
+  private final Queue<DemoMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
   public DemoConsumer(KafkaConfig config) {
     this.config = config;
@@ -64,17 +64,19 @@ public class DemoConsumer implements Managed {
           queue.poll();
         }
 
-        if (!queue.offer(record)) {
+        DemoMessage message = new DemoMessage(record.partition(), record.offset(), record.value(), new DateTime());
+
+        if (!queue.offer(message)) {
           LOG.error("failed to track record");
         }
       }
     } while (true);
   }
 
-  public List<String> getValues() {
-    List<String> values = Lists.newArrayList();
-    queue.iterator().forEachRemaining(record -> values.add(record.value()));
-    return values;
+  public List<DemoMessage> getMessages() {
+    List<DemoMessage> messages = Lists.newArrayList();
+    queue.iterator().forEachRemaining(messages::add);
+    return messages;
   }
 
   @Override
