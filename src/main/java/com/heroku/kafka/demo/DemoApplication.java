@@ -22,8 +22,8 @@ public class DemoApplication extends Application<DemoConfiguration>  {
 
   @Override
   public void run(DemoConfiguration config, Environment env) throws Exception {
-    DemoProducer producer = new DemoProducer(config.getKafkaConfig());
-    DemoConsumer consumer = new DemoConsumer(config.getKafkaConfig());
+    DemoProducer producer = new DemoProducer(config.getKafkaConfig(), env.metrics());
+    DemoConsumer consumer = new DemoConsumer(config.getKafkaConfig(), env.metrics());
 
     env.lifecycle().manage(producer);
     env.lifecycle().manage(consumer);

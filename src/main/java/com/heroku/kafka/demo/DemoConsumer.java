@@ -1,7 +1,10 @@
 package com.heroku.kafka.demo;
 
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Lists;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.metrics.MetricsFactory;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -27,14 +30,17 @@ public class DemoConsumer implements Managed {
 
   private final KafkaConfig config;
 
+  private final MetricRegistry metrics;
+
   private ExecutorService executor;
 
   private KafkaConsumer<String, String> consumer;
 
   private final Queue<DemoMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
-  public DemoConsumer(KafkaConfig config) {
+  public DemoConsumer(KafkaConfig config, MetricRegistry metrics) {
     this.config = config;
+    this.metrics = metrics;
   }
 
   @Override
@@ -54,6 +60,11 @@ public class DemoConsumer implements Managed {
 
     consumer = new KafkaConsumer<>(properties);
     consumer.subscribe(singletonList(config.getTopic()));
+
+    consumer.metrics().forEach((name, metric) -> {
+      Gauge<Double> gauge = () -> metric.value();
+      metrics.register(MetricRegistry.name(DemoConsumer.class, name.name()), gauge);
+    });
 
     do {
       ConsumerRecords<String, String> records = consumer.poll(100);
