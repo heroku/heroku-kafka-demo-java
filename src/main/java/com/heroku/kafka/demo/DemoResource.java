@@ -26,16 +26,15 @@ public class DemoResource {
   }
 
   @GET
-  @Path("/")
+  @Path("")
   @Produces(MediaType.TEXT_HTML)
   @Timed
   public DemoView showMessages(@Context UriInfo uriInfo) {
-    String addMessageUrl = uriInfo.getBaseUriBuilder().path(DemoResource.class, "addMessage").build().toString();
-    return new DemoView(addMessageUrl);
+    return new DemoView();
   }
 
   @GET
-  @Path("/messages")
+  @Path("messages")
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public List<DemoMessage> getMessages() {
@@ -43,7 +42,7 @@ public class DemoResource {
   }
 
   @POST
-  @Path("/messages")
+  @Path("messages")
   @Consumes(MediaType.TEXT_PLAIN)
   @Produces(MediaType.TEXT_PLAIN)
   @Timed

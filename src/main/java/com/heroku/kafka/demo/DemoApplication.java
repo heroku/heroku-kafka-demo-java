@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 
 public class DemoApplication extends Application<DemoConfiguration>  {
   public static void main(String[] args) throws Exception {
@@ -28,6 +29,7 @@ public class DemoApplication extends Application<DemoConfiguration>  {
     env.lifecycle().manage(producer);
     env.lifecycle().manage(consumer);
 
+    env.jersey().register(DeclarativeLinkingFeature.class);
     env.jersey().register(new DemoResource(producer, consumer));
   }
 }
