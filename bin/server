@@ -2,5 +2,7 @@
 
 set -e
 
+export TRUSTSTORE_PASSWORD=trust-kafka-key
+export KEYSTORE_PASSWORD=key-kafka-trust
 . bin/setup_certs ${ADDON_NAME:-KAFKA}
 exec java $JAVA_OPTS -cp target/classes:target/dependency/* com.heroku.kafka.demo.DemoApplication server config.yml
