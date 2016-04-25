@@ -2,6 +2,7 @@ package com.heroku.kafka.demo;
 
 import com.codahale.metrics.Slf4jReporter;
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -26,6 +27,7 @@ public class DemoApplication extends Application<DemoConfiguration>  {
   @Override
   public void initialize(Bootstrap<DemoConfiguration> bootstrap) {
     bootstrap.addBundle(new ViewBundle<>());
+    bootstrap.addBundle(new AssetsBundle());
   }
 
   @Override
