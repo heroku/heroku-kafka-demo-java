@@ -1,11 +1,13 @@
 package com.heroku.kafka.demo;
 
+import com.github.jkutner.EnvKeyStore;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -35,10 +37,23 @@ public class KafkaConfig {
             break;
           case "kafka+ssl":
             properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
-            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, ".truststore.jks");
-            properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getTrustStorePassword());
-            properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, ".keystore.jks");
-            properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getKeyStorePassword());
+
+            try {
+              EnvKeyStore envTrustStore = EnvKeyStore.createWithRandomPassword("KAFKA_TRUSTED_CERT");
+              EnvKeyStore envKeyStore = EnvKeyStore.createWithRandomPassword("KAFKA_CLIENT_CERT_KEY", "KAFKA_CLIENT_CERT");
+
+              File trustStore = envTrustStore.storeTemp();
+              File keyStore = envKeyStore.storeTemp();
+
+              properties.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, envTrustStore.type());
+              properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStore.getAbsolutePath());
+              properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, envTrustStore.password());
+              properties.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, envKeyStore.type());
+              properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStore.getAbsolutePath());
+              properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, envKeyStore.password());
+            } catch (Exception e) {
+              throw new RuntimeException("There was a problem creating the Kafka key stores", e);
+            }
             break;
           default:
             throw new IllegalArgumentException(format("unknown scheme; %s", uri.getScheme()));
@@ -50,14 +65,6 @@ public class KafkaConfig {
 
     properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, Joiner.on(",").join(hostPorts));
     return properties;
-  }
-
-  private static String getTrustStorePassword() {
-    return checkNotNull(getenv("TRUSTSTORE_PASSWORD"));
-  }
-
-  private static String getKeyStorePassword() {
-    return checkNotNull(getenv("KEYSTORE_PASSWORD"));
   }
 
   public String getTopic() {
