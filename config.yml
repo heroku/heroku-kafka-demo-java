@@ -3,3 +3,6 @@ logging:
 
   loggers:
     com.heroku.kafka.demo: DEBUG
+
+kafkaConfig:
+  topic: ${KAFKA_TOPIC}
