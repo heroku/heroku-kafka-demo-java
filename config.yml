@@ -4,5 +4,5 @@ logging:
   loggers:
     com.heroku.kafka.demo: DEBUG
 
-kafkaConfig:
+kafka:
   topic: ${KAFKA_TOPIC}
