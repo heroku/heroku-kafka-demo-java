@@ -3,6 +3,8 @@ package com.heroku.kafka.demo;
 import com.codahale.metrics.Slf4jReporter;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -28,6 +30,11 @@ public class DemoApplication extends Application<DemoConfiguration>  {
   public void initialize(Bootstrap<DemoConfiguration> bootstrap) {
     bootstrap.addBundle(new ViewBundle<>());
     bootstrap.addBundle(new AssetsBundle());
+    bootstrap.setConfigurationSourceProvider(
+            new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                    new EnvironmentVariableSubstitutor()
+            )
+    );
   }
 
   @Override

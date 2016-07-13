@@ -6,6 +6,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SslConfigs;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.File;
 import java.net.URI;
@@ -18,6 +19,10 @@ import static java.lang.String.format;
 import static java.lang.System.getenv;
 
 public class KafkaConfig {
+
+  @NotEmpty
+  private String topic;
+
   public Properties getProperties() {
     return buildDefaults();
   }
@@ -68,6 +73,6 @@ public class KafkaConfig {
   }
 
   public String getTopic() {
-    return checkNotNull(getenv("KAFKA_TOPIC"));
+    return topic;
   }
 }
