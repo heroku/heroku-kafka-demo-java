@@ -43,11 +43,11 @@ public class DemoResource {
 
   @POST
   @Path("messages")
-  @Consumes(MediaType.TEXT_PLAIN)
-  @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @Timed
-  public String addMessage(String message) throws TimeoutException, ExecutionException {
-    Uninterruptibles.getUninterruptibly(producer.send(message), 20, TimeUnit.SECONDS);
+  public String addMessage(DemoMessage message) throws TimeoutException, ExecutionException {
+    Uninterruptibles.getUninterruptibly(producer.send(message.getMessage()), 20, TimeUnit.SECONDS);
     return format("received message: %s", message);
   }
 }
