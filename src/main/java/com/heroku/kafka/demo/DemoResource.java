@@ -26,14 +26,6 @@ public class DemoResource {
   }
 
   @GET
-  @Path("")
-  @Produces(MediaType.TEXT_HTML)
-  @Timed
-  public DemoView showMessages(@Context UriInfo uriInfo) {
-    return new DemoView();
-  }
-
-  @GET
   @Path("messages")
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
