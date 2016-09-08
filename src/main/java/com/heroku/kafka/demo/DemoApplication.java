@@ -29,7 +29,7 @@ public class DemoApplication extends Application<DemoConfiguration>  {
   @Override
   public void initialize(Bootstrap<DemoConfiguration> bootstrap) {
     bootstrap.addBundle(new ViewBundle<>());
-    bootstrap.addBundle(new AssetsBundle());
+    bootstrap.addBundle(new AssetsBundle("/assets/index.html", "/"));
     bootstrap.setConfigurationSourceProvider(
             new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                     new EnvironmentVariableSubstitutor()
