@@ -1,6 +1,7 @@
 package com.heroku.kafka.demo;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import javax.ws.rs.*;
@@ -30,7 +31,7 @@ public class DemoResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public List<DemoMessage> getMessages() {
-    return consumer.getMessages();
+    return Lists.reverse(consumer.getMessages());
   }
 
   @POST
