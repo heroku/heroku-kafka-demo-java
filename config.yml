@@ -1,5 +1,10 @@
 server:
-  rootPath: /api/
+  type: simple
+  applicationContextPath: /
+  rootPath: /api/*
+  connector:
+    type: http
+    port: ${PORT}
 
 logging:
   level: INFO
