@@ -9,7 +9,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +80,8 @@ public class DemoConsumer implements Managed {
           queue.poll();
         }
 
-        DemoMessage message = new DemoMessage(record.partition(), record.offset(), record.value(), new DateTime());
+
+        DemoMessage message = new DemoMessage(record.value(), config.getTopic(), record.partition(), record.offset());
 
         if (!queue.offer(message)) {
           LOG.error("failed to track record");
