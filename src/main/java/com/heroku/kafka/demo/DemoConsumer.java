@@ -56,8 +56,7 @@ public class DemoConsumer implements Managed {
     LOG.info("starting");
     Properties properties = config.getProperties();
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
-    properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-    properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+    properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
     properties.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
     properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -80,11 +79,12 @@ public class DemoConsumer implements Managed {
           queue.poll();
         }
 
-
         DemoMessage message = new DemoMessage(record.value(), config.getTopic(), record.partition(), record.offset());
 
-        if (!queue.offer(message)) {
-          LOG.error("failed to track record");
+        if (queue.offer(message)) {
+          consumer.commitSync();
+        } else {
+          LOG.error("Failed to track message: {}", message);
         }
       }
     } while (running.get());
