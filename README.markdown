@@ -17,7 +17,7 @@ Create a heroku app with Kafka attached:
 
 ```
 $ heroku create
-$ heroku addons:create heroku-kafka:beta-dev
+$ heroku addons:create heroku-kafka:standard-0
 $ heroku kafka:wait
 ```
 
