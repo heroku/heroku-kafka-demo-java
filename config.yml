@@ -14,4 +14,4 @@ logging:
 
 kafka:
   topic: ${KAFKA_PREFIX}messages
-  consumerGroup: ${KAFKA_PREFIX}demo
+  consumerGroup: ${KAFKA_PREFIX}demo-group
