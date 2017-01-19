@@ -13,4 +13,5 @@ logging:
     com.heroku.kafka.demo: DEBUG
 
 kafka:
-  topic: ${KAFKA_TOPIC}
+  topic: ${KAFKA_PREFIX}messages
+  consumerGroup: ${KAFKA_PREFIX}demo
