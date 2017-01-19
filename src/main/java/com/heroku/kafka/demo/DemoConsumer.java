@@ -1,7 +1,5 @@
 package com.heroku.kafka.demo;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Lists;
 import io.dropwizard.lifecycle.Managed;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -15,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.singletonList;
@@ -27,8 +28,6 @@ public class DemoConsumer implements Managed {
 
   private final KafkaConfig config;
 
-  private final MetricRegistry metrics;
-
   private ExecutorService executor;
 
   private final AtomicBoolean running = new AtomicBoolean();
@@ -39,9 +38,8 @@ public class DemoConsumer implements Managed {
 
   private final Queue<DemoMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
-  public DemoConsumer(KafkaConfig config, MetricRegistry metrics) {
+  public DemoConsumer(KafkaConfig config) {
     this.config = config;
-    this.metrics = metrics;
   }
 
   @Override
@@ -63,11 +61,6 @@ public class DemoConsumer implements Managed {
 
     consumer = new KafkaConsumer<>(properties);
     consumer.subscribe(singletonList(config.getTopic()));
-
-    consumer.metrics().forEach((name, metric) -> {
-      Gauge<Double> gauge = () -> metric.value();
-      metrics.register(MetricRegistry.name(DemoConsumer.class, name.name()), gauge);
-    });
     LOG.info("started");
 
     do {
