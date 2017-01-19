@@ -27,12 +27,6 @@ Create the sample topic, by default the topic will have 32 partitions.
 $ heroku kafka:create messages
 ```
 
-Set an environment variable referencing the new topic:
-
-```
-$ heroku config:set KAFKA_TOPIC=messages
-```
-
 Deploy to Heroku and open the app:
 
 ```
