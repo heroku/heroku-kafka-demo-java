@@ -13,7 +13,7 @@ public class DemoProducer implements Managed {
   private static final Logger LOG = LoggerFactory.getLogger(DemoProducer.class);
 
   private final KafkaConfig config;
-  
+
   private Producer<String, String> producer;
 
   public DemoProducer(KafkaConfig config) {
@@ -23,11 +23,23 @@ public class DemoProducer implements Managed {
   public void start() throws Exception {
     LOG.info("starting");
     Properties properties = config.getProperties();
-    properties.put(ProducerConfig.ACKS_CONFIG, "all");
-    properties.put(ProducerConfig.RETRIES_CONFIG, 0);
+
     properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
     properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
     properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+
+    /*
+      There are several configuration properties that will make an application more robust in the face of transient
+      failures, such as connectivity issues, broker restarts, and leader elections.
+
+      We strongly recommend considering these properties when designing your application, as these transient failures
+      occur during the course of normal operation of a distributed system.
+     */
+    properties.put(ProducerConfig.RETRIES_CONFIG, 3); /* Resend in case of transient failure */
+    properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1); /* Prevent re-ordering of records during retries */
+    properties.put(ProducerConfig.ACKS_CONFIG, "all"); /* Require all in-sync replicas to ack */
+
+    /* SerDes */
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
