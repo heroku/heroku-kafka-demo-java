@@ -24,10 +24,6 @@ public class DemoProducer implements Managed {
     LOG.info("starting");
     Properties properties = config.getProperties();
 
-    properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-    properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-    properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
-
     /*
       There are several configuration properties that will make an application more robust in the face of transient
       failures, such as connectivity issues, broker restarts, and leader elections.
