@@ -1,6 +1,5 @@
 package com.heroku.kafka.demo;
 
-import com.github.jkutner.EnvKeyStore;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
