@@ -213,6 +213,9 @@ public class EnvKeyStore {
 
   private static X509Certificate parseCert(PEMParser parser) throws IOException, CertificateException {
     X509CertificateHolder certHolder = (X509CertificateHolder) parser.readObject();
+    if (certHolder == null) {
+      return null;
+    }
     X509Certificate certificate = new JcaX509CertificateConverter().getCertificate(certHolder);
     return certificate;
   }
