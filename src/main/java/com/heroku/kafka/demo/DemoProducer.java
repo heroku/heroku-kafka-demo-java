@@ -39,6 +39,10 @@ public class DemoProducer implements Managed {
     return producer.send(new ProducerRecord<>(config.getTopic(), message, message));
   }
 
+  public Future<RecordMetadata> send(String message, int partition) {
+    return producer.send(new ProducerRecord<>(config.getTopic(), partition, message, message));
+  }
+
   public void stop() throws Exception {
     LOG.info("stopping");
     Producer<String, String> producer = this.producer;

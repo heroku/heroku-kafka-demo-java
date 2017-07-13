@@ -1,18 +1,19 @@
 package com.heroku.kafka.demo;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import io.dropwizard.lifecycle.Managed;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Properties;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -38,6 +39,8 @@ public class DemoConsumer implements Managed {
 
   private final Queue<DemoMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
+  private final Queue<SettableFuture<Map<String, List<PartitionInfo>>>> queryQueue = new ArrayBlockingQueue<>(CAPACITY);
+
   public DemoConsumer(KafkaConfig config) {
     this.config = config;
   }
@@ -48,6 +51,12 @@ public class DemoConsumer implements Managed {
     executor.submit(this::loop);
     running.set(true);
     stopLatch = new CountDownLatch(1);
+  }
+
+  public ListenableFuture<Map<String, List<PartitionInfo>>> listTopics() {
+    SettableFuture<Map<String, List<PartitionInfo>>> future = SettableFuture.create();
+    queryQueue.add(future);
+    return future;
   }
 
   private void loop() {
@@ -64,6 +73,11 @@ public class DemoConsumer implements Managed {
     LOG.info("started");
 
     do {
+      SettableFuture future = queryQueue.poll();
+      if (future != null) {
+        future.set(consumer.listTopics());
+      }
+
       ConsumerRecords<String, String> records = consumer.poll(100);
       for (ConsumerRecord<String, String> record : records) {
         LOG.debug("offset={}, key={}, value={}", record.offset(), record.key(), record.value());
