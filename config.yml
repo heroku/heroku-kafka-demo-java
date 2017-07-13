@@ -17,4 +17,4 @@ kafka:
   consumerGroup: ${KAFKA_PREFIX}demo-group
   urlPrefix: HEROKU_KAFKA_HALORGIUM
   clientCertPrefix: HEROKU_KAFKA_HALORGIUM
-  trustedCertPrefix: HEROKU_KAFKA_HALORGIUM_MODERN
+  trustedCertPrefix: HEROKU_KAFKA_HALORGIUM
