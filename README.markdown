@@ -24,7 +24,7 @@ $ heroku kafka:wait
 Create the sample topic, by default the topic will have 32 partitions.
 
 ```
-$ heroku kafka:create messages
+$ heroku kafka:topics:create messages
 ```
 
 Deploy to Heroku and open the app:
