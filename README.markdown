@@ -5,6 +5,12 @@ This demo app accepts HTTP POST requests and writes them to a topic, and has a s
 
 You'll need to [provision](#provisioning) the app.
 
+## Building
+
+```
+mvn clean compile
+```
+
 ## Provisioning
 
 Install the kafka cli plugin:
