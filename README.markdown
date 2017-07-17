@@ -5,6 +5,12 @@ This demo app accepts HTTP POST requests and writes them to a topic, and has a s
 
 You'll need to [provision](#provisioning) the app.
 
+## Building
+
+```
+mvn clean compile
+```
+
 ## Provisioning
 
 Install the kafka cli plugin:
@@ -24,7 +30,7 @@ $ heroku kafka:wait
 Create the sample topic, by default the topic will have 32 partitions.
 
 ```
-$ heroku kafka:create messages
+$ heroku kafka:topics:create messages
 ```
 
 Deploy to Heroku and open the app:
