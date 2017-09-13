@@ -30,7 +30,7 @@ Create the sample topic and consumer group. By default, the topic will have 8 pa
 
 ```
 $ heroku kafka:topics:create messages
-$ heroku kafka:consumer-groups:create heroku-kafka-demo
+$ heroku kafka:consumer-groups:create demo-group
 ```
 
 Deploy to Heroku and open the app:
