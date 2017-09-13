@@ -23,7 +23,6 @@ Create a heroku app with Kafka attached:
 
 ```
 $ heroku apps:create your-cool-app-name
-$ heroku git:remote -a your-cool-app-name
 $ heroku addons:create heroku-kafka:basic-0
 ```
 
