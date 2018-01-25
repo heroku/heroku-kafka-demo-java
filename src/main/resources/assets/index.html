@@ -4,12 +4,13 @@
     <title>Apache Kafka on Heroku Demo</title>
     <link rel="stylesheet" href="https://www.herokucdn.com/purple/1.1.2/purple.min.css">
     <link rel="icon" href="https://www.herokucdn.com/favicon.ico">
-    <script src="https://npmcdn.com/react@15.3.1/dist/react.min.js"></script>
-    <script src="https://npmcdn.com/react-dom@15.3.1/dist/react-dom.min.js"></script>
-    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="https://npmcdn.com/react@15.5.4/dist/react.min.js"></script>
+    <script src="https://npmcdn.com/react-dom@15.5.4/dist/react-dom.min.js"></script>
+    <script src="https://npmcdn.com/react-websocket@2.0.0/build/index.js"></script>
+    <!--script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script> -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://npmcdn.com/moment@2.14.1"></script>
-    <script src="https://npmcdn.com/react-websocket"></script>
 </head>
 <body>
 <div class="container">
@@ -28,6 +29,85 @@
 </div>
 
 <script type="text/babel">
+
+class Websocket extends React.Component {
+
+    constructor(props) {
+      super(props);
+      this.state = {
+        ws: new WebSocket(this.props.url, this.props.protocol),
+        attempts: 1
+      };
+    }
+
+    logging(logline) {
+      if (this.props.debug === true) {
+          console.log(logline);
+      }
+    }
+
+    generateInterval (k) {
+        if(this.props.reconnectIntervalInMilliSeconds > 0) {
+            return this.props.reconnectIntervalInMilliSeconds;
+        }
+        return Math.min(30, (Math.pow(2, k) - 1)) * 1000;
+    }
+
+    setupWebsocket() {
+      let websocket = this.state.ws;
+
+      websocket.onopen = () => {
+        this.logging('Websocket connected');
+        if (typeof this.props.onOpen === 'function') this.props.onOpen();
+      };
+
+      websocket.onmessage = (evt) => {
+        this.props.onMessage(evt.data);
+      };
+
+      this.shouldReconnect = this.props.reconnect;
+      websocket.onclose = () => {
+        this.logging('Websocket disconnected');
+        if (typeof this.props.onClose === 'function') this.props.onClose();
+        if (this.shouldReconnect) {
+          let time = this.generateInterval(this.state.attempts);
+          this.timeoutID = setTimeout(() => {
+            this.setState({attempts: this.state.attempts+1});
+            this.setState({ws: new WebSocket(this.props.url, this.props.protocol)});
+            this.setupWebsocket();
+          }, time);
+        }
+      }
+    }
+
+    componentDidMount() {
+      this.setupWebsocket();
+    }
+
+    componentWillUnmount() {
+      this.shouldReconnect = false;
+      clearTimeout(this.timeoutID);
+      let websocket = this.state.ws;
+      websocket.close();
+    }
+
+    sendMessage(message){
+      let websocket = this.state.ws;
+      websocket.send(message);
+    }
+
+    render() {
+      return (
+        <div></div>
+      );
+    }
+}
+
+Websocket.defaultProps = {
+    debug: false,
+    reconnect: true
+};
+
     const Spinner = React.createClass({
         render: function () {
             if (!this.props.show) {
@@ -167,7 +247,7 @@
         },
 
         componentDidMount: function() {
-            this.fetchMessages()
+            // this.fetchMessages()
         },
 
         handleBlankStateAction: function (e) {
@@ -176,7 +256,8 @@
         },
 
         handleData(data) {
-            let result = JSON.parse(data)
+            var result = this.state.messages.concat([{message: data, topic: "messages", partition: 0}])
+            // let result = JSON.parse(data)
             this.setState({
                 messages: result,
                 fetching: false,
@@ -204,7 +285,7 @@
                     <div>
                         <InputForm onMessageSaved={this.handleMessageSaved} ref="inputForm" />
                         <MessageTable messages={this.state.messages} fetching={this.state.fetching} hasFetched={this.state.hasFetched} onBlankStateAction={this.handleBlankStateAction} />
-                        <Websocket url='ws://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
+                        <Websocket url='ws://localhost:8080/events' onMessage={this.handleData.bind(this)} />
                     </div>
             )
         }

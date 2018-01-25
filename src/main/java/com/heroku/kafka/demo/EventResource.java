@@ -8,7 +8,7 @@ import javax.websocket.OnClose;
 import javax.websocket.Session;
 
 
-public class EventResource extends Endpoint implements MessageHandler.Whole<DemoMessage> {
+public class EventResource extends Endpoint implements MessageHandler.Whole<String> {
   private Session session;
   private EventBusManager eventBusManager;
 
@@ -25,6 +25,6 @@ public class EventResource extends Endpoint implements MessageHandler.Whole<Demo
   }
 
   @Override
-  public void onMessage(DemoMessage demoMessage) {
+  public void onMessage(String demoMessage) {
   }
 }

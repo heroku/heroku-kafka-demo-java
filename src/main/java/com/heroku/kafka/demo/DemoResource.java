@@ -42,8 +42,7 @@ public class DemoResource {
 
   @POST
   @Path("receive")
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.TEXT_PLAIN)
   @Timed
   public void receiveEvent(String message) {
     DemoMessage demoMessage = new DemoMessage(message, "messages", 0, 0);

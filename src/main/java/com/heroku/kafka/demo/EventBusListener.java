@@ -15,6 +15,6 @@ public class EventBusListener {
 
   @Subscribe
   public void onEvent(DemoMessage demoMessage) {
-    session.getAsyncRemote().sendObject(demoMessage);
+    session.getAsyncRemote().sendObject(demoMessage.getMessage());
   }
 }

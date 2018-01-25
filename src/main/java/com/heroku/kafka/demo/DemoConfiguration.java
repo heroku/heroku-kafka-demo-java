@@ -1,11 +1,11 @@
 package com.heroku.kafka.demo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.loginbox.heroku.config.HerokuConfiguration;
-
 import javax.validation.Valid;
 
-public class DemoConfiguration extends HerokuConfiguration {
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.Configuration;
+
+public class DemoConfiguration extends Configuration {
 
   @Valid
   @JsonProperty("kafka")

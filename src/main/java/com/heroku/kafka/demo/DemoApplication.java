@@ -30,7 +30,8 @@ public class DemoApplication extends Application<DemoConfiguration>  {
 
   @Override
   public void initialize(Bootstrap<DemoConfiguration> bootstrap) {
-    // bootstrap.addBundle(websocketBundle);
+    websocketBundle = new WebsocketBundle(NoOpHandler.class);
+    bootstrap.addBundle(websocketBundle);
     bootstrap.addBundle(new AssetsBundle("/assets/index.html", "/"));
     bootstrap.setConfigurationSourceProvider(
             new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
