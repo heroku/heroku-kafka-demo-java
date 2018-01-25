@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Apache Kafka on Heroku Demo</title>
+    <title>Heroku Event Relay Demo</title>
     <link rel="stylesheet" href="https://www.herokucdn.com/purple/1.1.2/purple.min.css">
     <link rel="icon" href="https://www.herokucdn.com/favicon.ico">
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
@@ -16,7 +16,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Apache Kafka on Heroku with Java Demo</h1>
+            <h1>Heroku Event Relay Demo</h1>
             <div id="app">
                 <div class="spinner">
                     <i class="spinner__dot spinner__dot--one"></i>
@@ -155,7 +155,6 @@ Websocket.defaultProps = {
                 tableContent = this.props.messages.map((m) => {
                     return (
                             <tr>
-                                <td>{m.offset}</td>
                                 <td>{m.message}</td>
                                 <td>{m.topic}</td>
                                 <td>{m.partition}</td>
@@ -190,47 +189,6 @@ Websocket.defaultProps = {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-            )
-        }
-    })
-
-    const InputForm = React.createClass({
-        getInitialState: function() {
-            return {
-                message: ''
-            }
-        },
-
-        handleMessageChange: function(e) {
-            this.setState({ message: e.target.value })
-        },
-
-        handleSubmit: function(e) {
-            e.preventDefault()
-            const message = this.state.message
-            if (!message) {
-                return
-            }
-
-            axios.post('/api/messages', { message: message }).then(() => {
-                this.setState({ message: '' })
-            })
-        },
-
-        render: function() {
-            return (
-                    <div className="purple-box u-padding-Am u-padding-Bs u-margin-Bm">
-                        <form className="form" onSubmit={this.handleSubmit}>
-                            <div className="form-group">
-                                <div className="input-group">
-                                    <input type="text" ref="inputField" className="form-control" value={this.state.message} onChange={this.handleMessageChange} placeholder="Type a message..." />
-                                    <span className="input-group-btn">
-                                        <button className="btn btn-primary" type="submit">Send</button>
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
                     </div>
             )
         }
