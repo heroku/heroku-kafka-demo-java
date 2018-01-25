@@ -1,19 +1,22 @@
 package com.heroku.kafka.demo;
 
-import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Uninterruptibles;
+import static java.lang.String.format;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static java.lang.String.format;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 @Path("/")
 public class DemoResource {
@@ -21,9 +24,12 @@ public class DemoResource {
 
   private final DemoConsumer consumer;
 
-  public DemoResource(DemoProducer producer, DemoConsumer consumer) {
+  private final EventBusManager eventBusManager;
+
+  public DemoResource(DemoProducer producer, DemoConsumer consumer, EventBusManager eventBusManager) {
     this.producer = producer;
     this.consumer = consumer;
+    this.eventBusManager = eventBusManager;
   }
 
   @GET
@@ -32,6 +38,16 @@ public class DemoResource {
   @Timed
   public List<DemoMessage> getMessages() {
     return Lists.reverse(consumer.getMessages());
+  }
+
+  @POST
+  @Path("receive")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Timed
+  public void receiveEvent(String message) {
+    DemoMessage demoMessage = new DemoMessage(message, "messages", 0, 0);
+    eventBusManager.getEventBus().post(demoMessage);
   }
 
   @POST

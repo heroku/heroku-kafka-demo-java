@@ -9,6 +9,7 @@
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://npmcdn.com/moment@2.14.1"></script>
+    <script src="https://npmcdn.com/react-websocket"></script>
 </head>
 <body>
 <div class="container">
@@ -174,6 +175,15 @@
             this.refs.inputForm.refs.inputField.focus()
         },
 
+        handleData(data) {
+            let result = JSON.parse(data)
+            this.setState({
+                messages: result,
+                fetching: false,
+                hasFetched:true
+            })
+        },
+
         fetchMessages: function() {
             this.setState({ fetching: true })
             axios.get('/api/messages')
@@ -183,7 +193,7 @@
                             fetching: false,
                             hasFetched: true
                         })
-                        setTimeout(this.fetchMessages, 5000)
+                        setTimeout(this.fetchMessages, 1000)
                     })
 
             // TODO: handle failure
@@ -194,6 +204,7 @@
                     <div>
                         <InputForm onMessageSaved={this.handleMessageSaved} ref="inputForm" />
                         <MessageTable messages={this.state.messages} fetching={this.state.fetching} hasFetched={this.state.hasFetched} onBlankStateAction={this.handleBlankStateAction} />
+                        <Websocket url='ws://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
                     </div>
             )
         }
