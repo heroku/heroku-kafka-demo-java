@@ -132,7 +132,7 @@ Websocket.defaultProps = {
             if (!this.props.hasFetched) {
                 tableContent = (
                         <tr>
-                            <td colSpan="4">Fetching messages...</td>
+                            <td colSpan="4">Waiting for messages...</td>
                         </tr>
                 )
             }
@@ -285,7 +285,7 @@ Websocket.defaultProps = {
                     <div>
                         <InputForm onMessageSaved={this.handleMessageSaved} ref="inputForm" />
                         <MessageTable messages={this.state.messages} fetching={this.state.fetching} hasFetched={this.state.hasFetched} onBlankStateAction={this.handleBlankStateAction} />
-                        <Websocket url='ws://localhost:8080/events' onMessage={this.handleData.bind(this)} />
+                        <Websocket url='ws://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
                     </div>
             )
         }
