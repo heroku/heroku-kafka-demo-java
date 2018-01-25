@@ -168,7 +168,6 @@ Websocket.defaultProps = {
                     <div>
                         <div className="row">
                             <div className="col-md-6">
-                                <h5>Recent Messages <small>Refreshes every 5 seconds <Spinner show={this.props.fetching} /></small></h5>
                             </div>
                             <div className="col-md-6 text-right">
                                 <h5>
@@ -285,7 +284,7 @@ Websocket.defaultProps = {
                     <div>
                         <InputForm onMessageSaved={this.handleMessageSaved} ref="inputForm" />
                         <MessageTable messages={this.state.messages} fetching={this.state.fetching} hasFetched={this.state.hasFetched} onBlankStateAction={this.handleBlankStateAction} />
-                        <Websocket url='ws://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
+                        <Websocket url='wss://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
                     </div>
             )
         }
