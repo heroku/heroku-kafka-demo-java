@@ -194,6 +194,47 @@ Websocket.defaultProps = {
         }
     })
 
+    const InputForm = React.createClass({
+        getInitialState: function() {
+            return {
+                message: ''
+            }
+        },
+
+        handleMessageChange: function(e) {
+            this.setState({ message: e.target.value })
+        },
+
+        handleSubmit: function(e) {
+            e.preventDefault()
+            const message = this.state.message
+            if (!message) {
+                return
+            }
+
+            axios.post('/api/messages', { message: message }).then(() => {
+                this.setState({ message: '' })
+            })
+        },
+
+        render: function() {
+            return (
+                    <div className="purple-box u-padding-Am u-padding-Bs u-margin-Bm">
+                        <form className="form" onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <input type="text" ref="inputField" className="form-control" value={this.state.message} onChange={this.handleMessageChange} placeholder="Type a message..." />
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-primary" type="submit">Send</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+            )
+        }
+    })
+
     const App = React.createClass({
         getInitialState: function() {
             return {
@@ -240,7 +281,6 @@ Websocket.defaultProps = {
         render: function() {
             return (
                     <div>
-                        <InputForm onMessageSaved={this.handleMessageSaved} ref="inputForm" />
                         <MessageTable messages={this.state.messages} fetching={this.state.fetching} hasFetched={this.state.hasFetched} onBlankStateAction={this.handleBlankStateAction} />
                         <Websocket url='wss://event-relay-jchao-app.herokuapp.com/events' onMessage={this.handleData.bind(this)} />
                     </div>
