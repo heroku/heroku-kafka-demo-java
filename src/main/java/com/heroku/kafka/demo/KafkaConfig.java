@@ -45,7 +45,7 @@ public class KafkaConfig {
             break;
           case "kafka+ssl":
             properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
-            properties.put("ssl.endpoint.identification.algorithm", "null");
+            properties.put("ssl.endpoint.identification.algorithm", "");
 
             try {
               EnvKeyStore envTrustStore = EnvKeyStore.createWithRandomPassword("KAFKA_TRUSTED_CERT");
